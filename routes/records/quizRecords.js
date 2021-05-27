@@ -4,12 +4,12 @@ var mysql = require("mysql");
 var config = require("../../config.json");
 
 //get all the quizRecords rows for a specific player
-router.get("/player",function(req,res){
+router.get("/player", function (req, res) {
     let playerId = req.query.playerId;
-    var query = `SELECT * FROM quiz_record WHERE player_id = ${playerId}`;
+    var query = `SELECT * FROM QUIZ_RECORD WHERE player_id = ${playerId}`;
     var connection = mysql.createConnection(config.connection);
     connection.connect();
-    connection.query(query,function(err,rows,fields){
+    connection.query(query, function (err, rows, fields) {
         if (err) throw err;
         res.status(200).json(rows);
     })
@@ -17,20 +17,20 @@ router.get("/player",function(req,res){
 });
 
 //create the quizRecords for a single Player
-router.post("/player",function(req,res){
+router.post("/player", function (req, res) {
     var connection = mysql.createConnection(config.connection);
     let playerId = req.body.playerId;
     connection.connect();
-    for(let quizId = 1; quizId<=48;quizId++){
-        let query = `INSERT INTO quiz_record (quiz_id,player_id,hits,fails,score,completed)\
+    for (let quizId = 1; quizId <= 48; quizId++) {
+        let query = `INSERT INTO QUIZ_RECORD (quiz_id,player_id,hits,fails,score,completed)\
                      VALUES (${quizId}, ${playerId}, 0, 0,0,0)`;
-        connection.query(query,function(err,rows,fields){
-            if(err) throw err;
+        connection.query(query, function (err, rows, fields) {
+            if (err) throw err;
         })
     }
 
-    let query = `SELECT * FROM quiz_record WHERE player_id = ${playerId}`;
-    connection.query(query, function(err,rows,fields){
+    let query = `SELECT * FROM QUIZ_RECORD WHERE player_id = ${playerId}`;
+    connection.query(query, function (err, rows, fields) {
         if (err) throw err;
         res.status(200).json(rows);
     });
@@ -39,31 +39,31 @@ router.post("/player",function(req,res){
 })
 
 //update specific quiz record of specific player
-router.put("/quiz_record/:quizid",function(req,res){
+router.put("/quiz_record/:quizid", function (req, res) {
     let playerId = req.body.playerid,
         quizId = req.params.quizid,
         hits = req.body.hits,
         fails = req.body.fails,
         score = req.body.score,
-        completed = (req.body.score===30)?1:0,
+        completed = (req.body.score === 30) ? 1 : 0,
         quiz_record = [
             hits,
             fails,
             score,
             completed,
             quizId,
-            playerId   
-       ];
-    let query = 'UPDATE quiz_record SET hits = ?, fails = ?, score = ?, completed = ? WHERE quiz_id = ? and player_id = ?';
+            playerId
+        ];
+    let query = 'UPDATE QUIZ_RECORD SET hits = ?, fails = ?, score = ?, completed = ? WHERE quiz_id = ? and player_id = ?';
     var connection = mysql.createConnection(config.connection);
     connection.connect();
-    connection.query(query,quiz_record,function(err,rows,fields){
-        if(err) throw err;
+    connection.query(query, quiz_record, function (err, rows, fields) {
+        if (err) throw err;
     });
 
-    query = `SELECT * FROM quiz_record WHERE player_id = ${playerId} AND quiz_id = ${quizId}`;
-    connection.query(query,function(err,rows,fields){
-        if(err) throw err;
+    query = `SELECT * FROM QUIZ_RECORD WHERE player_id = ${playerId} AND quiz_id = ${quizId}`;
+    connection.query(query, function (err, rows, fields) {
+        if (err) throw err;
         res.status(200).json(rows);
     })
     connection.end();

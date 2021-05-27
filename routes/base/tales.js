@@ -8,12 +8,12 @@ var config = require("../../config.json");
 //     next();
 // })
 
-router.get("/",function(req,res){
-    let query = "SELECT * FROM tales";
+router.get("/", function (req, res) {
+    let query = "SELECT * FROM TALES";
     var connection = mysql.createConnection(config.connection);
     connection.connect();
-    connection.query(query,function (err,rows,fields){
-        if(err) throw err;
+    connection.query(query, function (err, rows, fields) {
+        if (err) throw err;
         res.status(200).json(rows);
     });
     connection.end();
